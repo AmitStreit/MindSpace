@@ -20,22 +20,53 @@ export default function NoteList({ navigation }) {
         { id: '11', title: 'medical summery', content: '*summerized medical*' },
     ])
 
+    const upsertTodo = (todo) => {
+        setTodos((previosTodos) => {
+            const index = previosTodos.findIndex(x => x.id == todo.id)
+            if (index === -1) {
+                return [
+                    todo,
+                    ...previosTodos
+                ]
+            } else {
+                previosTodos[index].title = todo.title
+                previosTodos[index].content = todo.content
+                return [...previosTodos]
+            }
+        })
+    }
+
     const todoListItemPressHandler = (item) => {
-        navigation.navigate('EditNote', item)
+        navigation.navigate('EditNote', { item: item, upsertTodo: upsertTodo, isNew: false, todos: todos })
         //navigation.push('EditNote')
     }
 
+    const addTodoPressHandler = () => {
+        const emptyItem = { id: '', title: '', content: '' }
+        navigation.navigate('EditNote', { item: emptyItem, upsertTodo: upsertTodo, isNew: true, todos: todos })
+    }
+
+    
+
     return (
-        <View style={styles.container}>
-            <FlatList
-                numColumns={2}
-                keyExtractor={(item) => item.id}
-                data={todos}
-                renderItem={({ item }) => (
-                    <TodoListItem item={item} pressHandler={todoListItemPressHandler} />
-                )}
-            />
-        </View>
+        <ScrollView>
+            <View style={styles.container}>
+                <View>
+                    <FlatList
+                        numColumns={2}
+                        keyExtractor={(item) => item.id}
+                        data={todos}
+                        extraData={todos}
+                        renderItem={({ item }) => (
+                            <TodoListItem item={item} pressHandler={todoListItemPressHandler} />
+                        )}
+                    />
+                    <View>
+                        <Button onPress={addTodoPressHandler} title='add todo' color='#047013' />
+                    </View>
+                </View>
+            </View>
+        </ScrollView>
     );
 }
 
@@ -44,3 +75,42 @@ const styles = StyleSheet.create({
         backgroundColor: '#202125',
     }
 });
+
+
+//const unsubscribe = navigation.addListener('focus', () => {
+    //    console.log('focus')
+    //});
+    //const unsubscribe2 = navigation.addListener('willFocus', () => {
+    //    console.log('willFocus')
+    //});
+    ///* const unsubscribe3 = navigation.addListener('onWillFocus', () => {
+    //    console.log('onWillFocus')
+    //}); */
+    //const unsubscribe4 = navigation.addListener('didFocus', () => {
+    //    console.log('didFocus')
+    //});
+    //const unsubscribe5 = navigation.addListener('willBlur', () => {
+    //    console.log('willBlur')
+    //});
+    //const unsubscribe6 = navigation.addListener('didBlur', () => {
+    //    console.log('didBlur')
+    //});
+
+
+
+
+    //componentDidMount() {
+    //    console.log('didmount')
+    //    /* this.props.fetchData();
+    //    this.willFocusSubscription = this.props.navigation.addListener(
+    //        'willFocus',
+    //        () => {
+    //            this.props.fetchData();
+    //        }
+    //    ); */
+    //}
+
+    //componentWillUnmount() {
+    //    console.log('willunmount')
+    //    //this.willFocusSubscription.remove();
+    //}
